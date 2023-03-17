@@ -1,0 +1,5 @@
+if(EXISTS "/home/ligan/dev/c2m/build/extern/m/test/mtest[1]_tests.cmake")
+  include("/home/ligan/dev/c2m/build/extern/m/test/mtest[1]_tests.cmake")
+else()
+  add_test(mtest_NOT_BUILT mtest_NOT_BUILT)
+endif()

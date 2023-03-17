@@ -1,0 +1,1 @@
+/usr/bin/clang    CMakeFiles/c2m.dir/src/cmodule.c.o CMakeFiles/c2m.dir/src/c2m.c.o  -o c2m   -L/home/ligan/dev/c2m/dep/lib  -Wl,-rpath,/home/ligan/dev/c2m/dep/lib -lmlrl -lclib -lclang 
