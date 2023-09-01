@@ -17,7 +17,7 @@ include_directories(
 )
 
 
-find_package(LLVM 13 REQUIRED CONFIG)
+find_package(LLVM 14 REQUIRED CONFIG)
 message(STATUS "Found LLVM BIN ${LLVM_TOOLS_BINARY_DIR}")
 execute_process(COMMAND llvm-config --libfiles
                 OUTPUT_VARIABLE llvm_libfiles OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -60,6 +60,8 @@ target_link_libraries(c2m PRIVATE
   ${clang_lib}
   ${sys_libraries}
 )
+
+target_link_options(c2m PRIVATE -no-pie)
 
 add_custom_command(
   TARGET c2m

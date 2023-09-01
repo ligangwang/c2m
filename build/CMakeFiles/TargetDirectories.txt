@@ -1,6 +1,0 @@
-/home/ligan/dev/c2m/build/CMakeFiles/rebuild_cache.dir
-/home/ligan/dev/c2m/build/CMakeFiles/c2m.dir
-/home/ligan/dev/c2m/build/CMakeFiles/acc_gen.dir
-/home/ligan/dev/c2m/build/CMakeFiles/edit_cache.dir
-/home/ligan/dev/c2m/build/CMakeFiles/omp_gen.dir
-/home/ligan/dev/c2m/build/CMakeFiles/intrinsics_gen.dir
