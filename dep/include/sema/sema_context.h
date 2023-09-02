@@ -28,13 +28,13 @@ struct loop_nested_level{
 
 struct sema_context {
     /* mapping type string into type enum: hashtable of (symbol, int) */
-    struct hashtable *symbol_2_int_types;
+    struct type_context *tc;
 
     /* 
      *  value type env: symboltable of <symbol, struct type_item>*>
      *  binding variable name to type expression
      */
-    struct symboltable decl_2_typexprs;
+    struct symboltable varname_2_typexprs;
 
     /* 
      *  value ast env: symboltable of <symbol, struct ast_node>*>
@@ -77,6 +77,7 @@ struct sema_context {
      *  builtin ASTs: symbol to ast_node*, only used for codegen
      */
     struct hashtable builtin_ast;
+    struct ast_node *builtin_ast_block;
 
     /* 
      *  generic value ASTs: hashtable of <symbol, struct ast_node*>
@@ -134,7 +135,7 @@ struct field_info{
     struct ast_node *aggr_root; //root 
 };
 
-struct sema_context *sema_context_new(struct hashtable *symbol_2_int_types, struct ast_node *stdio, struct ast_node *math, bool is_repl);
+struct sema_context *sema_context_new(struct type_context *tc, struct ast_node *sys_block, bool is_repl);
 void sema_context_free(struct sema_context *env);
 size_t enter_scope(struct sema_context *env);
 size_t leave_scope(struct sema_context *env);

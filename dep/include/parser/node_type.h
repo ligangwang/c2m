@@ -23,13 +23,14 @@ extern "C" {
  */
 #define FOREACH_NODETYPE(ENUM_ITEM) \
     ENUM_ITEM(NULL_NODE)            \
+    ENUM_ITEM(TOKEN_NODE)           \
     ENUM_ITEM(IMPORT_NODE)          \
     ENUM_ITEM(MEMORY_NODE)          \
     ENUM_ITEM(LITERAL_NODE)         \
     ENUM_ITEM(IDENT_NODE)           \
     ENUM_ITEM(VAR_NODE)             \
     ENUM_ITEM(CAST_NODE)            \
-    ENUM_ITEM(RECORD_NODE)          \
+    ENUM_ITEM(STRUCT_NODE)          \
     ENUM_ITEM(VARIANT_NODE)           \
     ENUM_ITEM(VARIANT_TYPE_ITEM_NODE) \
     ENUM_ITEM(ADT_INIT_NODE)        \
@@ -53,6 +54,8 @@ extern "C" {
     ENUM_ITEM(CALL_NODE)            \
     ENUM_ITEM(FUNC_TYPE_NODE)       \
     ENUM_ITEM(FUNC_NODE)            \
+    ENUM_ITEM(NEW_NODE)             \
+    ENUM_ITEM(DEL_NODE)             \
     ENUM_ITEM(BLOCK_NODE)           \
     ENUM_ITEM(TOTAL_NODE)
 
@@ -65,8 +68,6 @@ struct node_type_name{
 };
 
 extern const char *node_type_strings[];
-
-struct node_type_name *get_node_type_name_by_symbol(symbol symbol);
 
 struct node_type_name *get_node_type_names();
 

@@ -61,11 +61,13 @@ target_link_libraries(c2m PRIVATE
   ${sys_libraries}
 )
 
+target_compile_options(c2m PRIVATE -g)
 target_link_options(c2m PRIVATE -no-pie)
 
-# add_custom_command(
-#   TARGET c2m
-#   POST_BUILD
-#   COMMAND c2m -i/usr/include -o ${CMAKE_SOURCE_DIR}/mlib stdio.h
-#   COMMAND c2m -i/usr/include -o ${CMAKE_SOURCE_DIR}/mlib math.h
-# )
+add_custom_command(
+  TARGET c2m
+  POST_BUILD
+  COMMAND c2m -i/usr/include -o ${CMAKE_SOURCE_DIR}/mlib stdio.h
+  COMMAND c2m -i/usr/include -o ${CMAKE_SOURCE_DIR}/mlib math.h
+  COMMAND c2m -i/usr/include -o ${CMAKE_SOURCE_DIR}/mlib stdlib.h
+)

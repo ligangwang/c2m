@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Debug",
             "program": "${workspaceFolder}/build/c2m",
-            "args": ["-i/usr/include", "-o", "/home/ligan/dev/c2m/mlib", "stdio.h"],
+            "args": ["-i/usr/include", "-o", "/workspaces/c2m", "stdio.h"],
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,

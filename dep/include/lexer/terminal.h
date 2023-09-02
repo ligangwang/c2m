@@ -61,8 +61,8 @@ enum token_type{
     TOKEN_USE,
     TOKEN_TYPE,
     TOKEN_RESOURCE,
-    TOKEN_FUNC,
-    TOKEN_RECORD,
+    TOKEN_FUN,
+    TOKEN_STRUCT,
     TOKEN_ENUM,
     TOKEN_FLAGS,
     TOKEN_VARIANT,
@@ -82,7 +82,6 @@ enum token_type{
     TOKEN_DEFAULT,
 
     TOKEN_LET,
-    TOKEN_VAR,
     TOKEN_MUT,
     TOKEN_MAPTO,
     TOKEN_IF,
@@ -97,6 +96,7 @@ enum token_type{
     TOKEN_WHILE,
     TOKEN_BREAK,
     TOKEN_CONTINUE,
+    TOKEN_RETURN,
     TOKEN_LPAREN,
     TOKEN_RPAREN,
 
@@ -111,17 +111,15 @@ enum token_type{
     TOKEN_VARIADIC,
     TOKEN_ISTYPEOF,
 
-    TOKEN_DO,
-    TOKEN_SWITCH,
-    TOKEN_CASE,
-    TOKEN_RETURN,
+    TOKEN_MATCH,
+    TOKEN_WITH,
+    TOKEN_WHEN,
+    TOKEN_NEW,
+    TOKEN_DEL,
     
     TOKEN_YIELD,
     TOKEN_ASYNC,
     TOKEN_AWAIT,
-    TOKEN_MATCH,
-    TOKEN_WITH,
-    TOKEN_WHEN,
 
     /*IDENT token has to been at the end of keyword list, so that exact keyword match 
       always happens before identifier match
