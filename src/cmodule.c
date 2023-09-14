@@ -14,25 +14,49 @@
 #include <clang-c/Index.h>
 #include <stdio.h>
 
-enum type _get_type(CXType cxtype)
+struct MType {
+    enum type type;
+    enum type referee_type;
+};
+
+struct MType _get_type(CXType cxtype)
 {
-    enum type type = TYPE_NULL;
+    struct MType mtype;
+    mtype.type = TYPE_NULL;
+    mtype.referee_type = TYPE_NULL;
     if (cxtype.kind == CXType_Double) {
-        type = TYPE_F64;
+        mtype.type = TYPE_F64;
     } else if (cxtype.kind == CXType_Void) {
-        type = TYPE_UNIT;
+        mtype.type = TYPE_UNIT;
     } else if (cxtype.kind == CXType_Bool) {
-        type = TYPE_BOOL;
+        mtype.type = TYPE_BOOL;
     } else if (cxtype.kind == CXType_ULong) {
-        type = TYPE_U64;
+        mtype.type = TYPE_U64;
     } else if (cxtype.kind == CXType_Int || cxtype.kind == CXType_UInt) {
-        type = TYPE_INT;
+        mtype.type = TYPE_INT;
     } else if (cxtype.kind == CXType_Pointer) {
-        type = TYPE_STRING;
+        CXType pointee_type = clang_getPointeeType(cxtype);
+        if (pointee_type.kind == CXType_Char_U || pointee_type.kind == CXType_Char_S || pointee_type.kind == CXType_UChar || pointee_type.kind == CXType_SChar) {
+            mtype.type = TYPE_STRING;
+        } else {
+            mtype.type = TYPE_REF;
+            mtype.referee_type = _get_type(pointee_type).type;
+        }
     } else if (cxtype.kind == CXType_Char_S) {
-        type = TYPE_CHAR;
+        mtype.type = TYPE_CHAR;
     }
-    return type;
+    return mtype;
+}
+
+struct ast_node *_create_type_item_node(struct type_context *tc, struct MType mtype, struct source_location loc)
+{
+    symbol type_symbol = mtype.type ? get_type_symbol(tc, mtype.type) : 0;
+    if (mtype.type == TYPE_REF) {
+        symbol referee_type_symbol = mtype.referee_type ? get_type_symbol(tc, mtype.referee_type) : 0;
+        struct ast_node * val_node = type_item_node_new_with_builtin_type(referee_type_symbol, Mutable, loc);
+        return type_item_node_new_with_ref_type(val_node->type_item_node, Mutable, loc);
+    }
+    return type_symbol ? type_item_node_new_with_builtin_type(type_symbol, Mutable, loc) : 0;
 }
 
 struct ast_node *create_function_func_type(struct type_context *tc, CXCursor cursor)
@@ -43,21 +67,28 @@ struct ast_node *create_function_func_type(struct type_context *tc, CXCursor cur
     string fun_name;
     string_init_chars(&fun_name, clang_getCString(cx_fun_name));
     clang_disposeString(cx_fun_name);
+    if (string_eq_chars(&fun_name, "malloc")) {
+        printf("test\n");
+    }
     CXType cx_type = clang_getResultType(cur_type);
-    enum type type = _get_type(cx_type);
-    if (!type) {
+    struct MType ret_mtype = _get_type(cx_type);
+    if (!ret_mtype.type) {
         printf("failed to find m type for c return type %d: fun: %s\n", cx_type.kind, string_get(&fun_name));
         return 0;
     }
-    struct type_item *ret_type = create_nullary_type(tc, type);
+    struct type_item *ret_type = create_nullary_type(tc, ret_mtype.type);
     ARRAY_FUN_PARAM(fun_params);
     int num_args = clang_Cursor_getNumArguments(cursor);
     bool is_variadic = clang_isFunctionTypeVariadic(cur_type);
     for (int i = 0; i < num_args; ++i) {
         CXType cx_arg_type = clang_getArgType(cur_type, i);
-        enum type arg_type = _get_type(cx_arg_type);
-        if (!arg_type) {
+        struct MType arg_type = _get_type(cx_arg_type);
+        if (!arg_type.type) {
             printf("failed to find m type for c arg type %d: fun: %s\n", cx_arg_type.kind, string_get(&fun_name));
+            return 0;
+        }
+        if (arg_type.type == TYPE_REF && !arg_type.referee_type) {
+            printf("failed to find m ref type for c arg type %d: fun: %s\n", cx_arg_type.kind, string_get(&fun_name));
             return 0;
         }
         CXCursor arg_cursor = clang_Cursor_getArgument(cursor, i);
@@ -69,22 +100,17 @@ struct ast_node *create_function_func_type(struct type_context *tc, CXCursor cur
             string format = str_format("arg%d", i);
             var_name = to_symbol(string_get(&format));
         }
-        symbol arg_type_name = get_type_symbol(tc, arg_type);
-        if (!arg_type_name){
-            printf("failed to find type symbol for m type %d: fun: %s\n", arg_type, string_get(&fun_name));
-            return 0;
-        }
         struct source_location param_loc = {0, 0, 0, 0};
-        struct ast_node *is_of_type = type_item_node_new_with_builtin_type(arg_type_name, Mutable, param_loc);
+        struct ast_node *is_of_type = _create_type_item_node(tc, arg_type, param_loc);
         struct ast_node *var = ident_node_new(var_name, param_loc);
         struct ast_node *fun_param = var_node_new(var, is_of_type, 0, true, true, param_loc);
-        fun_param->type = create_nullary_type(tc, arg_type);
+        fun_param->type = create_nullary_type(tc, arg_type.type);
         array_push(&fun_params, &fun_param);
     }
     struct source_location loc = { 0, 1, 0, 0 };
     struct ast_node *params = block_node_new(&fun_params);
     symbol ret_type_symbol = ret_type && ret_type->type ? get_type_symbol(tc, ret_type->type) : 0;
-    struct ast_node *ret_type_item_node = ret_type_symbol ? type_item_node_new_with_builtin_type(ret_type_symbol, Mutable, loc) : 0;
+    struct ast_node *ret_type_item_node = _create_type_item_node(tc, ret_mtype, loc);
     return func_type_item_node_default_new(tc, string_2_symbol(&fun_name), params, ret_type_symbol, ret_type_item_node, is_variadic, true, loc);
 }
 
