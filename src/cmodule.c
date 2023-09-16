@@ -19,7 +19,7 @@ struct MType {
     enum type referee_type;
 };
 
-struct MType _get_type(CXType cxtype)
+struct MType _get_type(CXType cxtype, bool void_as_u8)
 {
     struct MType mtype;
     mtype.type = TYPE_NULL;
@@ -27,7 +27,7 @@ struct MType _get_type(CXType cxtype)
     if (cxtype.kind == CXType_Double) {
         mtype.type = TYPE_F64;
     } else if (cxtype.kind == CXType_Void) {
-        mtype.type = TYPE_UNIT;
+        mtype.type = void_as_u8 ? TYPE_U8 : TYPE_UNIT;
     } else if (cxtype.kind == CXType_Bool) {
         mtype.type = TYPE_BOOL;
     } else if (cxtype.kind == CXType_ULong) {
@@ -40,7 +40,7 @@ struct MType _get_type(CXType cxtype)
             mtype.type = TYPE_STRING;
         } else {
             mtype.type = TYPE_REF;
-            mtype.referee_type = _get_type(pointee_type).type;
+            mtype.referee_type = _get_type(pointee_type, true).type;
         }
     } else if (cxtype.kind == CXType_Char_S) {
         mtype.type = TYPE_CHAR;
@@ -71,7 +71,7 @@ struct ast_node *create_function_func_type(struct type_context *tc, CXCursor cur
         printf("test\n");
     }
     CXType cx_type = clang_getResultType(cur_type);
-    struct MType ret_mtype = _get_type(cx_type);
+    struct MType ret_mtype = _get_type(cx_type, false);
     if (!ret_mtype.type) {
         printf("failed to find m type for c return type %d: fun: %s\n", cx_type.kind, string_get(&fun_name));
         return 0;
@@ -82,7 +82,7 @@ struct ast_node *create_function_func_type(struct type_context *tc, CXCursor cur
     bool is_variadic = clang_isFunctionTypeVariadic(cur_type);
     for (int i = 0; i < num_args; ++i) {
         CXType cx_arg_type = clang_getArgType(cur_type, i);
-        struct MType arg_type = _get_type(cx_arg_type);
+        struct MType arg_type = _get_type(cx_arg_type, false);
         if (!arg_type.type) {
             printf("failed to find m type for c arg type %d: fun: %s\n", cx_arg_type.kind, string_get(&fun_name));
             return 0;

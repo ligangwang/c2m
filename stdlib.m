@@ -8,12 +8,12 @@ fun rand () -> int
 fun srand __seed:int -> ()
 fun rand_r __seed -> int
 fun drand48 () -> f64
-fun malloc __size:u64 -> &()
-fun calloc __nmemb:u64 __size:u64 -> &()
-fun realloc __ptr __size:u64 -> &()
+fun malloc __size:u64 -> &u8
+fun calloc __nmemb:u64 __size:u64 -> &u8
+fun realloc __ptr __size:u64 -> &u8
 fun free __ptr -> ()
-fun alloca __size:u64 -> &()
-fun aligned_alloc __alignment:u64 __size:u64 -> &()
+fun alloca __size:u64 -> &u8
+fun aligned_alloc __alignment:u64 __size:u64 -> &u8
 fun abort () -> ()
 fun exit __status:int -> ()
 fun quick_exit __status:int -> ()
