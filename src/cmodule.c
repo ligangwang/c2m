@@ -67,12 +67,12 @@ struct ast_node *create_function_func_type(struct type_context *tc, CXCursor cur
     string fun_name;
     string_init_chars(&fun_name, clang_getCString(cx_fun_name));
     clang_disposeString(cx_fun_name);
-    if (string_eq_chars(&fun_name, "malloc")) {
-        printf("test\n");
-    }
+    // if (string_eq_chars(&fun_name, "tmpfile")) {
+    //     printf("test\n");
+    // }
     CXType cx_type = clang_getResultType(cur_type);
     struct MType ret_mtype = _get_type(cx_type, false);
-    if (!ret_mtype.type) {
+    if (!ret_mtype.type || (ret_mtype.type == TYPE_REF && !ret_mtype.referee_type)) {
         printf("failed to find m type for c return type %d: fun: %s\n", cx_type.kind, string_get(&fun_name));
         return 0;
     }

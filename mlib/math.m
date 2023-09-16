@@ -33,16 +33,16 @@ fun atanh __x:f64 -> f64
 fun __atanh __x:f64 -> f64
 fun exp __x:f64 -> f64
 fun __exp __x:f64 -> f64
-fun frexp __x:f64 __exponent:ref -> f64
-fun __frexp __x:f64 __exponent:ref -> f64
+fun frexp __x:f64 __exponent -> f64
+fun __frexp __x:f64 __exponent -> f64
 fun ldexp __x:f64 __exponent:int -> f64
 fun __ldexp __x:f64 __exponent:int -> f64
 fun log __x:f64 -> f64
 fun __log __x:f64 -> f64
 fun log10 __x:f64 -> f64
 fun __log10 __x:f64 -> f64
-fun modf __x:f64 __iptr:ref -> f64
-fun __modf __x:f64 __iptr:ref -> f64
+fun modf __x:f64 __iptr -> f64
+fun __modf __x:f64 __iptr -> f64
 fun expm1 __x:f64 -> f64
 fun __expm1 __x:f64 -> f64
 fun log1p __x:f64 -> f64
@@ -102,8 +102,8 @@ fun tgamma arg0:f64 -> f64
 fun __tgamma arg0:f64 -> f64
 fun gamma arg0:f64 -> f64
 fun __gamma arg0:f64 -> f64
-fun lgamma_r arg0:f64 __signgamp:ref -> f64
-fun __lgamma_r arg0:f64 __signgamp:ref -> f64
+fun lgamma_r arg0:f64 __signgamp -> f64
+fun __lgamma_r arg0:f64 __signgamp -> f64
 fun rint __x:f64 -> f64
 fun __rint __x:f64 -> f64
 fun nextafter __x:f64 __y:f64 -> f64
@@ -120,8 +120,8 @@ fun round __x:f64 -> f64
 fun __round __x:f64 -> f64
 fun trunc __x:f64 -> f64
 fun __trunc __x:f64 -> f64
-fun remquo __x:f64 __y:f64 __quo:ref -> f64
-fun __remquo __x:f64 __y:f64 __quo:ref -> f64
+fun remquo __x:f64 __y:f64 __quo -> f64
+fun __remquo __x:f64 __y:f64 __quo -> f64
 fun fdim __x:f64 __y:f64 -> f64
 fun __fdim __x:f64 __y:f64 -> f64
 fun fmax __x:f64 __y:f64 -> f64
